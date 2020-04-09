@@ -63,13 +63,13 @@ def update_binaries():
     stdout = run_shell(f'curl -sfL https://git.io/JvHZO | sh')
 
 
-def genesis_time(target: Path, new_time):
+def genesis_time(target: Path, new_time, new_chain_id):
     contents = target.read_text()
     d = json.loads(contents)
     ts = d['genesis_time']
     log.info(f'Current genesis time is {ts}')
     d['genesis_time'] = new_time
-    d['chain_id'] = "UND-Mainchain-TestNet-v4" #TODO: Extract
+    d['chain_id'] = new_chain_id
 
     td = tempfile.gettempdir()
     now = int(time.time())
@@ -109,7 +109,8 @@ def start(machine_d):
     run_shell(f"systemctl start {machine_d['service']}")
 
 
-def unsafe_reset(home):
+def unsafe_reset(machine_d):
+    home = machine_d['home']
     log.info('Unsafe Reset All')
     stdout = run_shell(f'/usr/local/bin/und unsafe-reset-all --home {home}')
     log.info(stdout)
@@ -133,8 +134,8 @@ def revert(machine):
 
     stop(machine_d)
 
-    unsafe_reset(machine['home'])
-    fetch_genesis(machine['home'] / 'config/genesis.json')
+    unsafe_reset(machine_d)
+    fetch_genesis(machine_d['home'] / 'config/genesis.json')
 
     start(machine_d)
 
@@ -142,13 +143,15 @@ def revert(machine):
 @main.command()
 @click.argument('height', required=True, type=int)
 @click.argument('genesistime', required=False)
+@click.argument('chain_id', required=False)
 @click.argument('machine', required=False)
-def genesis(height, genesistime, machine):
+def genesis(height, genesistime, chain_id, machine):
     """
     Exports genesis, downloads new binaries, and restarts UND
 
     :param height:
     :param genesistime: Genesis time should be in the format: 2020-02-25T14:03:00Z
+    :param chain_id:
     :return:
     """
     log.info('Upgrading UND Mainchain')
@@ -158,9 +161,6 @@ def genesis(height, genesistime, machine):
     else:
         machine_d = MACHINES[machine]
 
-    service = machine_d['service']
-    home = machine_d['home']
-
     wait_for_height(height)
 
     stop(machine_d)
@@ -169,10 +169,12 @@ def genesis(height, genesistime, machine):
 
     if genesistime is not None:
         log.info(f'Setting genesis time has been set to {genesistime}')
-        intermediate = genesis_time(intermediate, genesistime)
+        intermediate = genesis_time(intermediate, genesistime, chain_id)
         replace_genesis(machine_d, intermediate)
     else:
         log.info(f'Genesis time has not been set')
+
+    unsafe_reset(machine_d)
 
     update_binaries()
     get_version()
