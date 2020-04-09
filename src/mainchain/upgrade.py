@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import shutil
 import subprocess
 import tempfile
 import time
@@ -50,9 +51,7 @@ def export_genesis(height, home):
 
 def update_binaries():
     log.info('Updating Binaries')
-    cmd = f'curl -sfL https://git.io/JvHZO | sh'
-
-    stdout = run_shell(cmd)
+    stdout = run_shell(f'curl -sfL https://git.io/JvHZO | sh')
 
 
 def genesis_time(target: Path, new_time):
@@ -124,28 +123,25 @@ def revert(machine):
 
 @main.command()
 @click.argument('height', required=True, type=int)
-@click.argument('service', required=False)
-@click.argument('home', required=False)
 @click.argument('genesistime', required=False)
-def genesis(height, service, home, genesistime):
+@click.argument('machine', required=False)
+def genesis(height, genesistime, machine):
     """
     Exports genesis, downloads new binaries, and restarts UND
 
     :param height:
-    :param service:
-    :param home:
     :param genesistime: Genesis time should be in the format: 2020-02-25T14:03:00Z
     :return:
     """
     log.info('Upgrading UND Mainchain')
 
-    if home is None:
-        home = Path(os.path.expanduser("~")) / '.und_mainchain'
+    if machine is None:
+        machine = MACHINES['default']
     else:
-        home = Path(home)
+        machine = MACHINES[machine]
 
-    if service is None:
-        service = 'und'
+    service = machine['service']
+    home = machine['home']
 
     log.info(f'Stopping {service}')
     run_shell(f'systemctl stop {service}')
@@ -155,6 +151,10 @@ def genesis(height, service, home, genesistime):
     if genesistime is not None:
         log.info(f'Setting genesis time has been set to {genesistime}')
         intermediate = genesis_time(intermediate, genesistime)
+        genesis = home / 'config/genesis.json'
+        genesis.unlink()
+        shutil.copy(str(intermediate), str(genesis.parent))
+        log.info(f'The genesis has been copied')
     else:
         log.info(f'Genesis time has not been set')
 
