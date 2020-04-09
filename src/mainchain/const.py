@@ -24,5 +24,9 @@ MACHINES = {
     'node3': {
         'service': 'node3',
         'home': Path('/home/deploy/node3/.und_mainchain')
+    },
+    'sentinel1': {
+        'service': 'sentinel1',
+        'home': Path('/home/deploy/sentinel1/.und_mainchain')
     }
 }
