@@ -50,6 +50,14 @@ def export_genesis(machine_d, height):
     return intermediate
 
 
+def replace_genesis(machine_d, source):
+    home = machine_d['home']
+    target = home / 'config/genesis.json'
+    target.unlink()
+    shutil.copy(str(source), str(target.parent))
+    log.info(f'The genesis has been copied')
+
+
 def update_binaries():
     log.info('Updating Binaries')
     stdout = run_shell(f'curl -sfL https://git.io/JvHZO | sh')
@@ -61,6 +69,7 @@ def genesis_time(target: Path, new_time):
     ts = d['genesis_time']
     log.info(f'Current genesis time is {ts}')
     d['genesis_time'] = new_time
+    d['chain_id'] = "UND-Mainchain-TestNet-v4" #TODO: Extract
 
     td = tempfile.gettempdir()
     now = int(time.time())
@@ -161,10 +170,7 @@ def genesis(height, genesistime, machine):
     if genesistime is not None:
         log.info(f'Setting genesis time has been set to {genesistime}')
         intermediate = genesis_time(intermediate, genesistime)
-        genesis = home / 'config/genesis.json'
-        genesis.unlink()
-        shutil.copy(str(intermediate), str(genesis.parent))
-        log.info(f'The genesis has been copied')
+        replace_genesis(machine_d, intermediate)
     else:
         log.info(f'Genesis time has not been set')
 
