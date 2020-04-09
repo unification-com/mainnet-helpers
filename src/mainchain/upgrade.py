@@ -10,6 +10,7 @@ import click
 from pathlib import Path
 
 from mainchain.sync import get_height, fetch_genesis
+from mainchain.const import MACHINES
 
 log = logging.getLogger(__name__)
 
@@ -89,9 +90,9 @@ def get_version():
     log.info(stdout)
 
 
-def unsafe_reset():
+def unsafe_reset(home):
     log.info('Unsafe Reset All')
-    stdout = run_shell(f'/usr/local/bin/und unsafe-reset-all')
+    stdout = run_shell(f'/usr/local/bin/und unsafe-reset-all --home {home}')
     log.info(stdout)
 
 
@@ -101,28 +102,24 @@ def main():
 
 
 @main.command()
-@click.argument('service', required=False)
-@click.argument('home', required=False)
-def revert(service, home):
+@click.argument('machine', required=False)
+def revert(machine):
     log.info('Reverting UND Mainchain')
     click.confirm('Do you want to continue?', abort=True)
 
-    if home is None:
-        home = Path(os.path.expanduser("~")) / '.und_mainchain'
+    if machine is None:
+        machine = MACHINES['default']
     else:
-        home = Path(home)
+        machine = MACHINES[machine]
 
-    if service is None:
-        service = 'und'
+    log.info(f"Stopping {machine['service']}")
+    run_shell(f"systemctl stop {machine['service']}")
 
-    log.info(f'Stopping {service}')
-    run_shell(f'systemctl stop {service}')
+    unsafe_reset(machine['home'])
+    fetch_genesis(machine['home'] / 'config/genesis.json')
 
-    unsafe_reset()
-    fetch_genesis(home / 'config/genesis.json')
-
-    log.info(f'Starting {service}')
-    run_shell(f'systemctl start {service}')
+    log.info(f"Starting {machine['service']}")
+    run_shell(f"systemctl start {machine['service']}")
 
 
 @main.command()
