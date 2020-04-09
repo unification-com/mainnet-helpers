@@ -33,7 +33,8 @@ def run_shell(cmd):
     return result.stdout
 
 
-def export_genesis(height, home):
+def export_genesis(machine_d, height):
+    home = machine_d['home']
     log.info('Exporting genesis')
     cmd = f'/usr/local/bin/und export ' \
         f'--for-zero-height --height {height} --home {home}'
@@ -89,6 +90,16 @@ def get_version():
     log.info(stdout)
 
 
+def stop(machine_d):
+    log.info(f"Stopping {machine_d['service']}")
+    run_shell(f"systemctl stop {machine_d['service']}")
+
+
+def start(machine_d):
+    log.info(f"Starting {machine_d['service']}")
+    run_shell(f"systemctl start {machine_d['service']}")
+
+
 def unsafe_reset(home):
     log.info('Unsafe Reset All')
     stdout = run_shell(f'/usr/local/bin/und unsafe-reset-all --home {home}')
@@ -107,18 +118,16 @@ def revert(machine):
     click.confirm('Do you want to continue?', abort=True)
 
     if machine is None:
-        machine = MACHINES['default']
+        machine_d = MACHINES['default']
     else:
-        machine = MACHINES[machine]
+        machine_d = MACHINES[machine]
 
-    log.info(f"Stopping {machine['service']}")
-    run_shell(f"systemctl stop {machine['service']}")
+    stop(machine_d)
 
     unsafe_reset(machine['home'])
     fetch_genesis(machine['home'] / 'config/genesis.json')
 
-    log.info(f"Starting {machine['service']}")
-    run_shell(f"systemctl start {machine['service']}")
+    start(machine_d)
 
 
 @main.command()
@@ -136,19 +145,18 @@ def genesis(height, genesistime, machine):
     log.info('Upgrading UND Mainchain')
 
     if machine is None:
-        machine = MACHINES['default']
+        machine_d = MACHINES['default']
     else:
-        machine = MACHINES[machine]
+        machine_d = MACHINES[machine]
 
-    service = machine['service']
-    home = machine['home']
+    service = machine_d['service']
+    home = machine_d['home']
 
     wait_for_height(height)
 
-    log.info(f'Stopping {service}')
-    run_shell(f'systemctl stop {service}')
+    stop(machine_d)
 
-    intermediate = export_genesis(height, home)
+    intermediate = export_genesis(machine_d, height)
 
     if genesistime is not None:
         log.info(f'Setting genesis time has been set to {genesistime}')
@@ -163,8 +171,7 @@ def genesis(height, genesistime, machine):
     update_binaries()
     get_version()
 
-    log.info(f'Starting {service}')
-    run_shell(f'systemctl start {service}')
+    start(machine_d)
 
 
 if __name__ == "__main__":
