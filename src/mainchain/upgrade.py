@@ -54,11 +54,20 @@ def update_binaries():
     stdout = run_shell(cmd)
 
 
-def genesis_time(target: Path):
+def genesis_time(target: Path, new_time):
     contents = target.read_text()
     d = json.loads(contents)
     ts = d['genesis_time']
-    log.info(f'Genesis time is {ts}')
+    log.info(f'Current genesis time is {ts}')
+    d['genesis_time'] = new_time
+
+    td = tempfile.gettempdir()
+    now = int(time.time())
+    target = Path(td) / f'genesis-{now}.json'
+
+    target.write_text(json.dumps(d, indent=2, separators=(',', ': ')))
+    log.info(f'Writing to {target}')
+    return target
 
 
 def wait_for_height(height):
@@ -87,20 +96,20 @@ def main():
 
 @main.command()
 @click.argument('height', required=True, type=int)
-@click.argument('genesistime', required=False)
 @click.argument('service', required=False)
 @click.argument('home', required=False)
-def genesis(height, genesistime, service, home):
+@click.argument('genesistime', required=False)
+def genesis(height, service, home, genesistime):
     """
     Exports genesis, downloads new binaries, and restarts UND
 
     :param height:
-    :param genesistime: Genesis time should be in the format: 2020-02-25T14:03:00Z
     :param service:
     :param home:
+    :param genesistime: Genesis time should be in the format: 2020-02-25T14:03:00Z
     :return:
     """
-    log.info('Upgrading')
+    log.info('Upgrading UND Mainchain')
 
     if home is None:
         home = Path(os.path.expanduser("~")) / '.und_mainchain'
@@ -110,16 +119,17 @@ def genesis(height, genesistime, service, home):
     if service is None:
         service = 'und'
 
-    if genesistime is not None:
-        log.info(f'Genesis time has been set to {genesistime}')
-    else:
-        log.info(f'Genesis time has not been set')
-
     log.info(f'Stopping {service}')
     run_shell(f'systemctl stop {service}')
 
     intermediate = export_genesis(height, home)
-    genesis_time(intermediate)
+
+    if genesistime is not None:
+
+        log.info(f'Setting genesis time has been set to {genesistime}')
+        intermediate = genesis_time(intermediate, genesistime)
+    else:
+        log.info(f'Genesis time has not been set')
 
     update_binaries()
     get_version()
