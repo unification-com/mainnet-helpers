@@ -76,7 +76,7 @@ def wait_for_height(height):
     """
     while True:
         h = get_height()
-        if height > h:
+        if h > height:
             log.info('Ready to upgrade')
             return
         else:
@@ -142,6 +142,8 @@ def genesis(height, genesistime, machine):
 
     service = machine['service']
     home = machine['home']
+
+    wait_for_height(height)
 
     log.info(f'Stopping {service}')
     run_shell(f'systemctl stop {service}')
