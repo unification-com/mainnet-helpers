@@ -9,7 +9,7 @@ import click
 
 from pathlib import Path
 
-from mainchain.sync import get_height
+from mainchain.sync import get_height, fetch_genesis
 
 log = logging.getLogger(__name__)
 
@@ -89,9 +89,40 @@ def get_version():
     log.info(stdout)
 
 
+def unsafe_reset():
+    log.info('Unsafe Reset All')
+    stdout = run_shell(f'/usr/local/bin/und unsafe-reset-all')
+    log.info(stdout)
+
+
 @click.group()
 def main():
     logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
+
+
+@main.command()
+@click.argument('service', required=False)
+@click.argument('home', required=False)
+def revert(service, home):
+    log.info('Reverting UND Mainchain')
+    click.confirm('Do you want to continue?', abort=True)
+
+    if home is None:
+        home = Path(os.path.expanduser("~")) / '.und_mainchain'
+    else:
+        home = Path(home)
+
+    if service is None:
+        service = 'und'
+
+    log.info(f'Stopping {service}')
+    run_shell(f'systemctl stop {service}')
+
+    unsafe_reset()
+    fetch_genesis(home / 'config/genesis.json')
+
+    log.info(f'Starting {service}')
+    run_shell(f'systemctl start {service}')
 
 
 @main.command()
@@ -125,7 +156,6 @@ def genesis(height, service, home, genesistime):
     intermediate = export_genesis(height, home)
 
     if genesistime is not None:
-
         log.info(f'Setting genesis time has been set to {genesistime}')
         intermediate = genesis_time(intermediate, genesistime)
     else:
