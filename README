@@ -2,10 +2,12 @@
 
 Miscellaneous tools to help support the provisioning and maintance of EV can be found here.
 
+
 ## Revert
 
 To revert all data, fetch the latest binary, and uses the lastest published 
-genesis.
+genesis. Warning, this will destroy your chain data and catching up may take
+a while.
 
 ```
 python -m mainchain.upgrade revert
@@ -14,7 +16,7 @@ python -m mainchain.upgrade revert
 
 ## Network upgrades
 
-The module `mainchain.upgrade` supports network upgrades
+The module `mainchain.upgrade` also helps support network upgrades
 
 ```
 python -m mainchain.upgrade genesis 700000
