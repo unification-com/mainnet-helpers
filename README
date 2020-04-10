@@ -16,10 +16,11 @@ python -m mainchain.upgrade revert
 
 ## Network upgrades
 
-The module `mainchain.upgrade` also helps support network upgrades
+There is also a helper that support network upgrades
 
 ```
 python -m mainchain.upgrade genesis 700000
 ```
 
-where 700000 is the block height.
+The helper will wait until the specified block and then perform an upgrade.
+
