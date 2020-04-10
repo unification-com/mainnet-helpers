@@ -6,9 +6,18 @@ RUN apt-get update && \
 RUN pip install --upgrade setuptools wheel twine
 RUN pip install --upgrade pip
 
-COPY src /src/src
+RUN mkdir /src && mkdir /src/tests && mkdir /src/undmainchain
 
-WORKDIR /src/src
+COPY LICENSE /src
+COPY MANIFEST.in /src
+COPY README /src
+COPY requirements.txt /src
+COPY setup.cfg /src
+COPY setup.py /src
+COPY tests/. /src/tests
+COPY undmainchain/. /src/undmainchain
+
+WORKDIR /src
 
 RUN find . | grep -E "(__pycache__|\.pyc$)" | xargs rm -rf
 
