@@ -3,7 +3,7 @@ import subprocess
 
 import requests
 
-from mainchain.const import GENESIS
+from undmainchain.const import GENESIS
 
 log = logging.getLogger(__name__)
 

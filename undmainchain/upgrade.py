@@ -9,8 +9,8 @@ import click
 
 from pathlib import Path
 
-from mainchain.sync import get_height, fetch_genesis, run_shell
-from mainchain.const import MACHINES
+from undmainchain.sync import get_height, fetch_genesis, run_shell
+from undmainchain.const import MACHINES
 
 log = logging.getLogger(__name__)
 
