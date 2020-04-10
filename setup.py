@@ -11,7 +11,7 @@ requires = [
 setuptools.setup(
     name="undmainchain",
     packages=['undmainchain'],
-    version="0.0.4",
+    version="0.0.5",
     author="Unification Foundation",
     author_email="indika@unification.com",
     description="Helper tools for administering the Unification Mainchain",
