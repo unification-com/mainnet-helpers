@@ -5,6 +5,7 @@ with open("README", "r") as fh:
 
 requires = [
     'click>=6.7',
+    'requests>=2.23.0'
 ]
 
 setuptools.setup(
