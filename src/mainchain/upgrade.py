@@ -2,7 +2,6 @@ import json
 import logging
 import os
 import shutil
-import subprocess
 import tempfile
 import time
 
@@ -10,27 +9,12 @@ import click
 
 from pathlib import Path
 
-from mainchain.sync import get_height, fetch_genesis
+from mainchain.sync import get_height, fetch_genesis, run_shell
 from mainchain.const import MACHINES
 
 log = logging.getLogger(__name__)
 
 SLEEP_TIME = 5
-
-
-def run_shell(cmd):
-    result = subprocess.run(
-        cmd, stdout=subprocess.PIPE, shell=True,
-        stderr=subprocess.PIPE, universal_newlines=True)
-
-    log.debug(cmd)
-
-    if result.returncode != 0:
-        log.error(result.stdout)
-        log.error(result.stderr)
-        exit(1)
-
-    return result.stdout
 
 
 def export_genesis(machine_d, height):
@@ -111,8 +95,12 @@ def start(machine_d):
 
 def unsafe_reset(machine_d):
     home = machine_d['home']
+    user = machine_d['und_user']
+
     log.info('Unsafe Reset All')
-    stdout = run_shell(f'/usr/local/bin/und unsafe-reset-all --home {home}')
+    stdout = run_shell(
+        f'runuser -l {user} -c "'
+        f'/usr/local/bin/und unsafe-reset-all --home {home}"')
     log.info(stdout)
 
 
@@ -124,6 +112,13 @@ def main():
 @main.command()
 @click.argument('machine', required=False)
 def revert(machine):
+    """
+    Reverts all data, fetches the latest binary, and uses the lastest published
+    genesis
+
+    :param machine: Override default locations for a particular machine
+    :return:
+    """
     log.info('Reverting UND Mainchain')
     click.confirm('Do you want to continue?', abort=True)
 
@@ -134,8 +129,11 @@ def revert(machine):
 
     stop(machine_d)
 
+    update_binaries()
+    get_version()
+
     unsafe_reset(machine_d)
-    fetch_genesis(machine_d['home'] / 'config/genesis.json')
+    fetch_genesis(machine_d)
 
     start(machine_d)
 
@@ -152,6 +150,7 @@ def genesis(height, genesistime, chain_id, machine):
     :param height:
     :param genesistime: Genesis time should be in the format: 2020-02-25T14:03:00Z
     :param chain_id:
+    :param machine: Override default locations for a particular machine
     :return:
     """
     log.info('Upgrading UND Mainchain')
