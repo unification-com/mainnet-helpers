@@ -1,6 +1,6 @@
 import setuptools
 
-with open("README", "r") as fh:
+with open("README.md", "r") as fh:
     long_description = fh.read()
 
 requires = [
@@ -11,7 +11,7 @@ requires = [
 setuptools.setup(
     name="undmainchain",
     packages=['undmainchain'],
-    version="0.0.8",
+    version="0.0.10",
     author="Unification Foundation",
     author_email="indika@unification.com",
     description="Helper tools for administering the Unification Mainchain",
