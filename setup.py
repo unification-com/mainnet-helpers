@@ -4,7 +4,10 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 requires = [
+    'awscli>=1.16.211',
+    'boto3>=1.9.200',
     'click>=6.7',
+    'pytest>=3.5.1',
     'requests>=2.23.0'
 ]
 
