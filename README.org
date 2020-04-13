@@ -1,13 +1,10 @@
+#+STARTUP: showeverything
 * Unification Mainnet Helpers
 
-Miscellaneous tools to help support the provisioning and maintance of EV can be found here.
-
+Miscellaneous tools to help support the provisioning and maintenance of Unification Mainnet EVs can be found here. Due to the complexity of the beast, these tools will only work with our standard environments. There is some room for differences that the codebase can be modified to handle.
 
 ** Revert
-
-To revert all data, fetch the latest binary, and uses the lastest published 
-genesis. Warning, this will destroy your chain data and catching up may take
-a while.
+This command will wipe all your chain data, use the latest published und versions and genesis. Whilst it may take much time to catch up, this is a good fresh slate if in need.
 
 #+BEGIN_SRC 
 python -m mainchain.upgrade revert
@@ -23,4 +20,3 @@ python -m mainchain.upgrade genesis 700000
 #+END_SRC
 
 The helper will wait until the specified block and then perform an upgrade.
-
