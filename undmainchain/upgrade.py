@@ -9,6 +9,7 @@ import click
 
 from pathlib import Path
 
+from undmainchain.common import start, stop
 from undmainchain.sync import get_height, fetch_genesis, run_shell
 from undmainchain.const import MACHINES
 
@@ -81,16 +82,6 @@ def wait_for_height(height):
 def get_version():
     stdout = run_shell(f'/usr/local/bin/und version')
     log.info(stdout)
-
-
-def stop(machine_d):
-    log.info(f"Stopping {machine_d['service']}")
-    run_shell(f"systemctl stop {machine_d['service']}")
-
-
-def start(machine_d):
-    log.info(f"Starting {machine_d['service']}")
-    run_shell(f"systemctl start {machine_d['service']}")
 
 
 def unsafe_reset(machine_d):
