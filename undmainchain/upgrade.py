@@ -9,6 +9,7 @@ import click
 
 from pathlib import Path
 
+from undmainchain.common import start, stop
 from undmainchain.sync import get_height, fetch_genesis, run_shell
 from undmainchain.const import MACHINES
 
@@ -83,16 +84,6 @@ def get_version():
     log.info(stdout)
 
 
-def stop(machine_d):
-    log.info(f"Stopping {machine_d['service']}")
-    run_shell(f"systemctl stop {machine_d['service']}")
-
-
-def start(machine_d):
-    log.info(f"Starting {machine_d['service']}")
-    run_shell(f"systemctl start {machine_d['service']}")
-
-
 def unsafe_reset(machine_d):
     home = machine_d['home']
     user = machine_d['und_user']
@@ -110,8 +101,9 @@ def main():
 
 
 @main.command()
+@click.argument('yes', required=False)
 @click.argument('machine', required=False)
-def revert(machine):
+def revert(yes, machine):
     """
     Reverts all data, fetches the latest binary, and uses the lastest published
     genesis
@@ -120,7 +112,8 @@ def revert(machine):
     :return:
     """
     log.info('Reverting UND Mainchain')
-    click.confirm('Do you want to continue?', abort=True)
+    if yes is False:
+        click.confirm('Do you want to continue?', abort=True)
 
     if machine is None:
         machine_d = MACHINES['default']
@@ -151,7 +144,6 @@ def genesis(height, genesistime, chain_id, machine):
     :param genesistime: Genesis time should be in the format: 2020-02-25T14:03:00Z
     :param chain_id:
     :param machine: Override default locations for a particular machine
-    :return:
     """
     log.info('Upgrading UND Mainchain')
 
