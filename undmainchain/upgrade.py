@@ -101,8 +101,9 @@ def main():
 
 
 @main.command()
+@click.argument('yes', required=False)
 @click.argument('machine', required=False)
-def revert(machine):
+def revert(yes, machine):
     """
     Reverts all data, fetches the latest binary, and uses the lastest published
     genesis
@@ -111,7 +112,8 @@ def revert(machine):
     :return:
     """
     log.info('Reverting UND Mainchain')
-    click.confirm('Do you want to continue?', abort=True)
+    if yes is False:
+        click.confirm('Do you want to continue?', abort=True)
 
     if machine is None:
         machine_d = MACHINES['default']
