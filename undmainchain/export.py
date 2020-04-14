@@ -79,5 +79,46 @@ def genesis(height, access_key, access_secret, yes, machine):
     start(machine_d)
 
 
+@main.command()
+@click.argument('access_key', required=True)
+@click.argument('access_secret', required=True)
+@click.argument('yes', required=False)
+@click.argument('machine', required=False)
+def chain(access_key, access_secret, yes, machine):
+    """
+    Export the Chain to Amazon S3
+
+    """
+    log.info('Exporting Genesis to Amazon S3')
+    if yes is False:
+        click.confirm(
+            'Warning: this may consume a lot of data. '
+            'Do you want to continue?', abort=True)
+
+    if machine is None:
+        machine_d = MACHINES['default']
+    else:
+        machine_d = MACHINES[machine]
+
+    home = machine_d['home']
+
+    td = tempfile.gettempdir()
+    now = int(time.time())
+    compressed = Path(td) / f'chain-{now}.gz'
+    cmd = f'tar -cv {home} | gzip > {compressed}'
+    log.info(cmd)
+
+    result = subprocess.run(
+        cmd, stdout=subprocess.PIPE, shell=True,
+        stderr=subprocess.PIPE, universal_newlines=True)
+
+    if result.returncode != 0:
+        log.error(result.stdout)
+        log.error(result.stderr)
+        exit(1)
+
+    upload_file(access_key, access_secret, compressed, f'chain-{now}.json.gz')
+
+
 if __name__ == "__main__":
     main()
