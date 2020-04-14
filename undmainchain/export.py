@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 @click.group()
 def main():
-    logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
+    logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 
 @main.command()
@@ -26,10 +26,10 @@ def main():
 @click.argument('machine', required=False)
 def genesis(height, access_key, access_secret, yes, machine):
     """
-    Export the Genesis to S3
+    Export the Genesis to Amazon S3
 
     """
-    log.info('Exporting Genesis to S3')
+    log.info('Exporting Genesis to Amazon S3')
     if yes is False:
         click.confirm('Do you want to continue?', abort=True)
 

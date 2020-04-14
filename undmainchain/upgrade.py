@@ -142,7 +142,6 @@ def genesis(height, genesistime, chain_id, machine):
     :param genesistime: Genesis time should be in the format: 2020-02-25T14:03:00Z
     :param chain_id:
     :param machine: Override default locations for a particular machine
-    :return:
     """
     log.info('Upgrading UND Mainchain')
 
