@@ -86,7 +86,7 @@ def get_version():
 
 def unsafe_reset(machine_d):
     home = machine_d['home']
-    user = machine_d['und_user']
+    user = machine_d['user']
 
     log.info('Unsafe Reset All')
     stdout = run_shell(
