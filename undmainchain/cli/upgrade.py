@@ -44,7 +44,23 @@ def replace_genesis(machine_d, source):
 
 def update_binaries():
     log.info('Updating Binaries')
-    stdout = run_shell(f'curl -sfL https://git.io/JvHZO | sh')
+    run_shell(f'curl -sfL https://git.io/JvHZO | sh')
+
+
+def update_binaries_specific(version):
+    for item in ['und', 'undcli']:
+        td = tempfile.gettempdir()
+        target = Path(td) / f'{item}.tar.gz'
+        if target.exists():
+            target.unlink()
+
+        log.debug(f'Downloading to {target}')
+        run_shell(
+            f'wget https://github.com/unification-com/mainchain/releases/'
+            f'download/{version}/{item}_v{version}_linux_x86_64.tar.gz -O '
+            f'{target}')
+        run_shell(f'tar -xC /usr/local/bin -f {target}')
+        run_shell(f'chmod + /usr/local/bin/{item}')
 
 
 def genesis_time(target: Path, new_time, new_chain_id):
@@ -102,17 +118,46 @@ def main():
 
 
 @main.command()
+@click.argument('version', required=True, type=str)
+@click.option('-y', '--yes', required=False, is_flag=True)
+@click.option('-m', '--machine', required=False, type=str, default=None)
+def binaries(version, yes, machine):
+    """
+    Fetches the specified version of the UND binaries
+
+    """
+    click.echo(f'Installing UND binaries version {version} from '
+               f'https://github.com/unification-com/mainchain/releases')
+    if yes is False:
+        click.confirm('Do you want to continue?', abort=True)
+
+    defaults = get_defaults()
+    if machine is None:
+        machine_d = defaults['default']
+    else:
+        machine_d = defaults[machine]
+
+    stop(machine_d)
+
+    update_binaries_specific(version)
+
+    get_version()
+
+    start(machine_d)
+
+
+@main.command()
 @click.option('-y', '--yes', required=False, is_flag=True)
 @click.option('-m', '--machine', required=False, type=str, default=None)
 def revert(yes, machine):
     """
-    Reverts all data, fetches the latest binary, and uses the lastest published
+    Reverts all data, fetches the latest binary, and uses the latest published
     genesis
 
     :param machine: Override default locations for a particular machine
     :return:
     """
-    log.info('Reverting UND Mainchain')
+    click.echo('Reverting UND Mainchain')
     if yes is False:
         click.confirm('Do you want to continue?', abort=True)
 
@@ -147,7 +192,7 @@ def genesis(height, genesistime, chain_id, machine):
     :param chain_id:
     :param machine: Override default locations for a particular machine
     """
-    log.info('Upgrading UND Mainchain')
+    click.echo('Upgrading UND Mainchain')
 
     defaults = get_defaults()
     if machine is None:
