@@ -8,7 +8,7 @@ from pathlib import Path
 import click
 
 from undmainchain.common import stop, upload_file, start
-from undmainchain.const import MACHINES
+from undmainchain.const import MACHINES, get_defaults
 
 log = logging.getLogger(__name__)
 
@@ -33,10 +33,11 @@ def genesis(height, access_key, access_secret, yes, machine):
     if yes is False:
         click.confirm('Do you want to continue?', abort=True)
 
+    defaults = get_defaults()
     if machine is None:
-        machine_d = MACHINES['default']
+        machine_d = defaults['default']
     else:
-        machine_d = MACHINES[machine]
+        machine_d = defaults[machine]
 
     home = machine_d['home']
     stop(machine_d)
@@ -95,10 +96,11 @@ def chain(access_key, access_secret, yes, machine):
             'Warning: this may consume a lot of data. '
             'Do you want to continue?', abort=True)
 
+    defaults = get_defaults()
     if machine is None:
-        machine_d = MACHINES['default']
+        machine_d = defaults['default']
     else:
-        machine_d = MACHINES[machine]
+        machine_d = defaults[machine]
 
     home = machine_d['home']
 

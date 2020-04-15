@@ -11,7 +11,7 @@ from pathlib import Path
 
 from undmainchain.common import start, stop
 from undmainchain.sync import get_height, fetch_genesis, run_shell
-from undmainchain.const import MACHINES
+from undmainchain.const import MACHINES, get_defaults
 
 log = logging.getLogger(__name__)
 
@@ -115,10 +115,11 @@ def revert(yes, machine):
     if yes is False:
         click.confirm('Do you want to continue?', abort=True)
 
+    defaults = get_defaults()
     if machine is None:
-        machine_d = MACHINES['default']
+        machine_d = defaults['default']
     else:
-        machine_d = MACHINES[machine]
+        machine_d = defaults[machine]
 
     stop(machine_d)
 
@@ -147,10 +148,11 @@ def genesis(height, genesistime, chain_id, machine):
     """
     log.info('Upgrading UND Mainchain')
 
+    defaults = get_defaults()
     if machine is None:
-        machine_d = MACHINES['default']
+        machine_d = defaults['default']
     else:
-        machine_d = MACHINES[machine]
+        machine_d = defaults[machine]
 
     wait_for_height(height)
 

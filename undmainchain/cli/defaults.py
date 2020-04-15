@@ -23,7 +23,6 @@ def show(machine):
     """
 
     defaults = get_defaults()
-
     if machine is None:
         machine_d = defaults['default']
     else:
