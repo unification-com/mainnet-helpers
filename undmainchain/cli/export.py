@@ -42,6 +42,8 @@ def genesis(height, access_key, access_secret, yes, machine):
         machine_d = defaults[machine]
 
     home = machine_d['home']
+    user = machine_d['user']
+
     stop(machine_d)
 
     td = tempfile.gettempdir()
@@ -50,8 +52,9 @@ def genesis(height, access_key, access_secret, yes, machine):
     compressed = Path(td) / f'genesis-{now}.json.gz'
     log.info(f'Writing to {intermediate}')
 
-    cmd = f'/usr/local/bin/und export ' \
+    export_cmd = f'/usr/local/bin/und export ' \
         f'--for-zero-height --height {height} --home {home}'
+    cmd = f'runuser -l {user} -c "{export_cmd}"'
 
     result = subprocess.run(
         cmd, stdout=subprocess.PIPE, shell=True,
