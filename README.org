@@ -7,28 +7,28 @@ Miscellaneous tools to help support the provisioning and maintenance of Unificat
 This command will wipe all your chain data, use the latest published und versions and genesis. Whilst it may take much time to catch up, this is a good fresh slate if needed.
 
 #+BEGIN_SRC 
-python -m undmainchain.upgrade revert
+python -m undmainchain.cli.upgrade revert
 #+END_SRC
 
 ** Genesis Export to Amazon S3
 The export helper will stop the EV, export the chain data to a JSON file and upload it to Amazon S3, and start the EV again.
 
 #+BEGIN_SRC 
-python -m undmainchain.export genesis HEIGHT AWSKEY AWSSECRET
+python -m undmainchain.cli.export genesis <HEIGHT> <AWSKEY> <AWSSECRET>
 #+END_SRC
 
 ** Chain Export to Amazon S3
 The entire chain can be compressed and exported to S3. Warning: chains can be large and uploading to S3 can incur cost.
 
 #+BEGIN_SRC 
-python -m undmainchain.export chain
+python -m undmainchain.cli.export chain
 #+END_SRC
 
 ** Network upgrades
 There is also a helper that support network upgrades
 
 #+BEGIN_SRC 
-python -m undmainchain.upgrade genesis 700000
+python -m undmainchain.cli.upgrade genesis 700000
 #+END_SRC
 
 The helper will wait until the specified block and then perform an upgrade.
