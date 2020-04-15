@@ -22,8 +22,8 @@ def main():
 @click.argument('height', required=True)
 @click.argument('access_key', required=True)
 @click.argument('access_secret', required=True)
-@click.argument('yes', required=False)
-@click.argument('machine', required=False)
+@click.option('-y', '--yes', required=False, is_flag=True)
+@click.option('-m', '--machine', required=False, type=str, default=None)
 def genesis(height, access_key, access_secret, yes, machine):
     """
     Export the Genesis to Amazon S3
@@ -82,8 +82,8 @@ def genesis(height, access_key, access_secret, yes, machine):
 @main.command()
 @click.argument('access_key', required=True)
 @click.argument('access_secret', required=True)
-@click.argument('yes', required=False)
-@click.argument('machine', required=False)
+@click.option('-y', '--yes', required=False, is_flag=True)
+@click.option('-m', '--machine', required=False, type=str, default=None)
 def chain(access_key, access_secret, yes, machine):
     """
     Export the Chain to Amazon S3

@@ -101,8 +101,8 @@ def main():
 
 
 @main.command()
-@click.argument('yes', required=False)
-@click.argument('machine', required=False)
+@click.option('-y', '--yes', required=False, is_flag=True)
+@click.option('-m', '--machine', required=False, type=str, default=None)
 def revert(yes, machine):
     """
     Reverts all data, fetches the latest binary, and uses the lastest published
@@ -135,7 +135,7 @@ def revert(yes, machine):
 @click.argument('height', required=True, type=int)
 @click.argument('genesistime', required=False)
 @click.argument('chain_id', required=False)
-@click.argument('machine', required=False)
+@click.option('-m', '--machine', required=False, type=str, default=None)
 def genesis(height, genesistime, chain_id, machine):
     """
     Exports genesis, downloads new binaries, and restarts UND
