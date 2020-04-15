@@ -8,7 +8,8 @@ requires = [
     'boto3>=1.9.200',
     'click>=7.1.1',
     'pytest>=3.5.1',
-    'requests>=2.23.0'
+    'requests>=2.23.0',
+    'tabulate>=0.8.7'
 ]
 
 setuptools.setup(
