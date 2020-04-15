@@ -4,6 +4,14 @@ from pathlib import Path
 GENESIS = 'https://raw.githubusercontent.com/unification-com/testnet/master' \
           '/latest/genesis.json'
 
+DEFAULT_BUCKET = 'genesis-export'
+
+COMMON = {
+    'und': '/usr/local/bin/und',
+    'undcli': '/usr/local/bin/undcli',
+    'export_bucket': DEFAULT_BUCKET
+}
+
 MACHINES = {
     'default': {
         'service': 'und',
@@ -36,3 +44,10 @@ MACHINES = {
         'und_user': 'deploy'
     }
 }
+
+
+def get_defaults():
+    d = {}
+    for key, value in MACHINES.items():
+        d[key] = {**value, **COMMON}
+    return d

@@ -3,11 +3,10 @@ from pathlib import Path
 
 import boto3
 
+from undmainchain.const import DEFAULT_BUCKET
 from undmainchain.sync import run_shell
 
 log = logging.getLogger(__name__)
-
-DEFAULT_BUCKET = 'genesis-export'
 
 
 def stop(machine_d):
