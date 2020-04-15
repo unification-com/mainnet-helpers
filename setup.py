@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 requires = [
     'awscli>=1.16.211',
     'boto3>=1.9.200',
-    'click>=6.7',
+    'click>=7.1.1',
     'pytest>=3.5.1',
     'requests>=2.23.0'
 ]
