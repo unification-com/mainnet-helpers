@@ -4,14 +4,13 @@ import os
 import shutil
 import tempfile
 import time
+from pathlib import Path
 
 import click
 
-from pathlib import Path
-
 from undmainchain.common import start, stop
+from undmainchain.const import get_defaults
 from undmainchain.sync import get_height, fetch_genesis, run_shell
-from undmainchain.const import MACHINES, get_defaults
 
 log = logging.getLogger(__name__)
 
@@ -98,6 +97,8 @@ def unsafe_reset(machine_d):
 @click.group()
 def main():
     logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
+    logging.getLogger("botocore").setLevel(logging.WARNING)
+    logging.getLogger("s3transfer").setLevel(logging.WARNING)
 
 
 @main.command()

@@ -13,6 +13,8 @@ log = logging.getLogger(__name__)
 @click.group()
 def main():
     logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+    logging.getLogger("botocore").setLevel(logging.WARNING)
+    logging.getLogger("s3transfer").setLevel(logging.WARNING)
 
 
 @main.command()
