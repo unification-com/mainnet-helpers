@@ -8,22 +8,24 @@ from pathlib import Path
 import click
 
 from undmainchain.common import stop, upload_file, start
-from undmainchain.const import MACHINES
+from undmainchain.const import get_defaults
 
 log = logging.getLogger(__name__)
 
 
 @click.group()
 def main():
-    logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+    logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
+    logging.getLogger("botocore").setLevel(logging.WARNING)
+    logging.getLogger("s3transfer").setLevel(logging.WARNING)
 
 
 @main.command()
 @click.argument('height', required=True)
 @click.argument('access_key', required=True)
 @click.argument('access_secret', required=True)
-@click.argument('yes', required=False)
-@click.argument('machine', required=False)
+@click.option('-y', '--yes', required=False, is_flag=True)
+@click.option('-m', '--machine', required=False, type=str, default=None)
 def genesis(height, access_key, access_secret, yes, machine):
     """
     Export the Genesis to Amazon S3
@@ -33,12 +35,15 @@ def genesis(height, access_key, access_secret, yes, machine):
     if yes is False:
         click.confirm('Do you want to continue?', abort=True)
 
+    defaults = get_defaults()
     if machine is None:
-        machine_d = MACHINES['default']
+        machine_d = defaults['default']
     else:
-        machine_d = MACHINES[machine]
+        machine_d = defaults[machine]
 
     home = machine_d['home']
+    user = machine_d['user']
+
     stop(machine_d)
 
     td = tempfile.gettempdir()
@@ -47,8 +52,9 @@ def genesis(height, access_key, access_secret, yes, machine):
     compressed = Path(td) / f'genesis-{now}.json.gz'
     log.info(f'Writing to {intermediate}')
 
-    cmd = f'/usr/local/bin/und export ' \
+    export_cmd = f'/usr/local/bin/und export ' \
         f'--for-zero-height --height {height} --home {home}'
+    cmd = f'runuser -l {user} -c "{export_cmd}"'
 
     result = subprocess.run(
         cmd, stdout=subprocess.PIPE, shell=True,
@@ -82,8 +88,8 @@ def genesis(height, access_key, access_secret, yes, machine):
 @main.command()
 @click.argument('access_key', required=True)
 @click.argument('access_secret', required=True)
-@click.argument('yes', required=False)
-@click.argument('machine', required=False)
+@click.option('-y', '--yes', required=False, is_flag=True)
+@click.option('-m', '--machine', required=False, type=str, default=None)
 def chain(access_key, access_secret, yes, machine):
     """
     Export the Chain to Amazon S3
@@ -95,10 +101,11 @@ def chain(access_key, access_secret, yes, machine):
             'Warning: this may consume a lot of data. '
             'Do you want to continue?', abort=True)
 
+    defaults = get_defaults()
     if machine is None:
-        machine_d = MACHINES['default']
+        machine_d = defaults['default']
     else:
-        machine_d = MACHINES[machine]
+        machine_d = defaults[machine]
 
     home = machine_d['home']
 

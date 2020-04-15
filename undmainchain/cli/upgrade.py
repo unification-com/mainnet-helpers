@@ -4,14 +4,13 @@ import os
 import shutil
 import tempfile
 import time
+from pathlib import Path
 
 import click
 
-from pathlib import Path
-
 from undmainchain.common import start, stop
+from undmainchain.const import get_defaults
 from undmainchain.sync import get_height, fetch_genesis, run_shell
-from undmainchain.const import MACHINES
 
 log = logging.getLogger(__name__)
 
@@ -86,7 +85,7 @@ def get_version():
 
 def unsafe_reset(machine_d):
     home = machine_d['home']
-    user = machine_d['und_user']
+    user = machine_d['user']
 
     log.info('Unsafe Reset All')
     stdout = run_shell(
@@ -98,11 +97,13 @@ def unsafe_reset(machine_d):
 @click.group()
 def main():
     logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
+    logging.getLogger("botocore").setLevel(logging.WARNING)
+    logging.getLogger("s3transfer").setLevel(logging.WARNING)
 
 
 @main.command()
-@click.argument('yes', required=False)
-@click.argument('machine', required=False)
+@click.option('-y', '--yes', required=False, is_flag=True)
+@click.option('-m', '--machine', required=False, type=str, default=None)
 def revert(yes, machine):
     """
     Reverts all data, fetches the latest binary, and uses the lastest published
@@ -115,10 +116,11 @@ def revert(yes, machine):
     if yes is False:
         click.confirm('Do you want to continue?', abort=True)
 
+    defaults = get_defaults()
     if machine is None:
-        machine_d = MACHINES['default']
+        machine_d = defaults['default']
     else:
-        machine_d = MACHINES[machine]
+        machine_d = defaults[machine]
 
     stop(machine_d)
 
@@ -135,7 +137,7 @@ def revert(yes, machine):
 @click.argument('height', required=True, type=int)
 @click.argument('genesistime', required=False)
 @click.argument('chain_id', required=False)
-@click.argument('machine', required=False)
+@click.option('-m', '--machine', required=False, type=str, default=None)
 def genesis(height, genesistime, chain_id, machine):
     """
     Exports genesis, downloads new binaries, and restarts UND
@@ -147,10 +149,11 @@ def genesis(height, genesistime, chain_id, machine):
     """
     log.info('Upgrading UND Mainchain')
 
+    defaults = get_defaults()
     if machine is None:
-        machine_d = MACHINES['default']
+        machine_d = defaults['default']
     else:
-        machine_d = MACHINES[machine]
+        machine_d = defaults[machine]
 
     wait_for_height(height)
 

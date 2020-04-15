@@ -33,7 +33,7 @@ def get_height():
 
 def fetch_genesis(machine_d):
     target = machine_d['home'] / 'config/genesis.json'
-    user = machine_d['und_user']
+    user = machine_d['user']
 
     r = requests.get(GENESIS)
     target.write_text(r.text)
