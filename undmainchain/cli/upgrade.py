@@ -44,7 +44,7 @@ def replace_genesis(machine_d, source):
 
 def update_binaries():
     log.info('Updating Binaries')
-    run_shell(f'curl -sfL https://git.io/JvHZO | sh')
+    run_shell(f'sh -c "$(curl -sfSL https://git.io/JvHZO)"')
 
 
 def update_binaries_specific(version):
