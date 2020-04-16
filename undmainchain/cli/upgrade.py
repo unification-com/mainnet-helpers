@@ -149,10 +149,10 @@ def binaries(version, yes, machine):
 @main.command()
 @click.option('-y', '--yes', required=False, is_flag=True)
 @click.option('-m', '--machine', required=False, type=str, default=None)
-def revert(yes, machine):
+def reset(yes, machine):
     """
-    Reverts all data, fetches the latest binary, and uses the latest published
-    genesis
+    Reset all data, fetches the latest binary, and uses the latest published
+    genesis. Use this if you want to restart from a fresh slate.
 
     :param machine: Override default locations for a particular machine
     :return:

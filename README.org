@@ -13,11 +13,17 @@ python -m undmainchain.cli.defaults show
 
 All the helpers take a ~--machine~ option that loads custom values. These values are defined in the ~undmainchain.const~ module.
 
-** Revert
+** Reset All
 This command will wipe all your chain data, use the latest published und versions and genesis. Whilst it may take much time to catch up, this is a good fresh slate if needed.
 
 #+BEGIN_SRC 
 python -m undmainchain.cli.upgrade revert
+#+END_SRC
+
+*** Install a specific version
+
+#+BEGIN_SRC 
+python -m undmainchain.cli.upgrade binaries 1.4.1
 #+END_SRC
 
 ** Export to S3
