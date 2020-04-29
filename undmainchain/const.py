@@ -42,7 +42,7 @@ MACHINES = {
         'service': 'seed1',
         'home': Path('/home/deploy/seed1/.und_mainchain'),
         'user': 'deploy'
-    }
+    },
     'sentinel1': {
         'service': 'sentinel1',
         'home': Path('/home/deploy/sentinel1/.und_mainchain'),
