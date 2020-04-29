@@ -53,7 +53,7 @@ def genesis(height, access_key, access_secret, yes, machine):
     log.info(f'Writing to {intermediate}')
 
     export_cmd = f'/usr/local/bin/und export ' \
-        f'--for-zero-height --height {height} --home {home}'
+        f'--home {home}'
     cmd = f'runuser -l {user} -c "{export_cmd}"'
 
     result = subprocess.run(
