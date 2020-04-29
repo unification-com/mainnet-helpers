@@ -38,9 +38,24 @@ MACHINES = {
         'home': Path('/home/deploy/node3/.und_mainchain'),
         'user': 'deploy'
     },
+    'seed1': {
+        'service': 'seed1',
+        'home': Path('/home/deploy/seed1/.und_mainchain'),
+        'user': 'deploy'
+    },
     'sentinel1': {
         'service': 'sentinel1',
         'home': Path('/home/deploy/sentinel1/.und_mainchain'),
+        'user': 'deploy'
+    },
+    'sentinel2': {
+        'service': 'sentinel2',
+        'home': Path('/home/deploy/sentinel2/.und_mainchain'),
+        'user': 'deploy'
+    },
+    'sentinel3': {
+        'service': 'sentinel3',
+        'home': Path('/home/deploy/sentinel3/.und_mainchain'),
         'user': 'deploy'
     }
 }
