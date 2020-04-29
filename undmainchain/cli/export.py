@@ -95,7 +95,7 @@ def chain(access_key, access_secret, yes, machine):
     Export the Chain to Amazon S3
 
     """
-    log.info('Exporting Genesis to Amazon S3')
+    log.info('Exporting Chain to Amazon S3')
     if yes is False:
         click.confirm(
             'Warning: this may consume a lot of data. '
