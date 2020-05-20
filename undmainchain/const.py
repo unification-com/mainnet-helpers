@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-GENESIS = 'https://raw.githubusercontent.com/unification-com/testnet/master' \
+GENESIS = 'https://raw.githubusercontent.com/unification-com/mainnet/master' \
           '/latest/genesis.json'
 
 DEFAULT_BUCKET = 'genesis-export'
