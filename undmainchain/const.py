@@ -37,6 +37,7 @@ MACHINES = {
         'service': 'node3',
         'home': Path('/home/deploy/node3/.und_mainchain'),
         'user': 'deploy'
+    },
     'node4': {
         'service': 'node4',
         'home': Path('/home/deploy/node4/.und_mainchain'),
@@ -56,6 +57,7 @@ MACHINES = {
         'service': 'node7',
         'home': Path('/home/deploy/node7/.und_mainchain'),
         'user': 'deploy'
+    },
     'node8': {
         'service': 'node8',
         'home': Path('/home/deploy/node8/.und_mainchain'),
@@ -75,6 +77,7 @@ MACHINES = {
         'service': 'node11',
         'home': Path('/home/deploy/node11/.und_mainchain'),
         'user': 'deploy'
+    },
     'node12': {
         'service': 'node12',
         'home': Path('/home/deploy/node12/.und_mainchain'),
