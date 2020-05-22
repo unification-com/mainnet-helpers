@@ -17,7 +17,7 @@ All the helpers take a ~--machine~ option that loads custom values. These values
 This command will wipe all your chain data, use the latest published und versions and genesis. Whilst it may take much time to catch up, this is a good fresh slate if needed.
 
 #+BEGIN_SRC 
-python -m undmainchain.cli.upgrade revert
+python -m undmainchain.cli.upgrade reset
 #+END_SRC
 
 *** Install a specific version
