@@ -21,12 +21,11 @@ def main():
 
 
 @main.command()
-@click.argument('height', required=True)
 @click.argument('access_key', required=True)
 @click.argument('access_secret', required=True)
 @click.option('-y', '--yes', required=False, is_flag=True)
 @click.option('-m', '--machine', required=False, type=str, default=None)
-def genesis(height, access_key, access_secret, yes, machine):
+def genesis(access_key, access_secret, yes, machine):
     """
     Export the Genesis to Amazon S3
 
