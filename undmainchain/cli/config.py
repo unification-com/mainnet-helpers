@@ -1,9 +1,12 @@
 import logging
 import os
 import subprocess
+
 import tempfile
 import time
+
 from pathlib import Path
+from shutil import copyfile
 
 import click
 
@@ -25,6 +28,7 @@ def set_line_in_file(target, prefix, replacement):
         else:
             newlines.append(line)
 
+    newlines.append("\n")
     target.write_text('\n'.join(newlines))
 
 
@@ -51,7 +55,7 @@ def set_app_line(line, value, yes, machine):
     Change a line in the app.toml
 
     """
-    log.info('Re-writing config file')
+    log.info('Re-writing line in config file')
     if yes is False:
         click.confirm('Do you want to continue?', abort=True)
 
@@ -65,6 +69,14 @@ def set_app_line(line, value, yes, machine):
     user = machine_d['user']
 
     app_config = home / 'config/app.toml'
+
+    td = tempfile.gettempdir()
+    now = int(time.time())
+    backup = Path(td) / f'app-{now}.config'
+
+    copyfile(app_config, backup)
+    log.info(f'Config backed up to {backup}')
+
     set_line_in_file(app_config, line, value)
 
 
