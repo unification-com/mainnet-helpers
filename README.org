@@ -49,3 +49,16 @@ python -m undmainchain.cli.upgrade genesis 700000
 #+END_SRC
 
 The helper will wait until the specified block and then perform an upgrade.
+
+
+** Updating the app.config
+
+A standard interface to updating config on any node is provided. Configuration can both be get and set. When setting the config, and backup is automatically made and the difference between the old and the new is rendered.
+
+#+BEGIN_SRC 
+python -m undmainchain.cli.config get-app-line pruning --machine=node1
+#+END_SRC
+
+#+BEGIN_SRC 
+python -m undmainchain.cli.config set-app-line pruning syncable --machine=node1
+#+END_SRC
