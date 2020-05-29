@@ -1,10 +1,8 @@
 import logging
 import os
 import subprocess
-
 import tempfile
 import time
-
 from pathlib import Path
 from shutil import copyfile
 
@@ -23,12 +21,11 @@ def set_line_in_file(target, prefix, replacement):
     newlines = []
     for line in contents.splitlines():
         if line.startswith(prefix + " "):
-            newline = f'{prefix} = {replacement}'
+            newline = f'{prefix} = {replacement}\n'
             newlines.append(newline)
         else:
             newlines.append(line)
 
-    newlines.append("\n")
     target.write_text('\n'.join(newlines))
 
 
@@ -38,6 +35,15 @@ def read_line_in_file(target, prefix):
         if line.startswith(prefix + " "):
             splitted = line.split('"')
             return splitted[1]
+
+
+def diff(original, new):
+    cmd = f"git diff {original} {new}"
+    result = subprocess.run(
+        cmd, stdout=subprocess.PIPE, shell=True,
+        stderr=subprocess.PIPE, universal_newlines=True)
+
+    print (result.stdout)
 
 
 @click.group()
@@ -78,6 +84,8 @@ def set_app_line(line, value, yes, machine):
     log.info(f'Config backed up to {backup}')
 
     set_line_in_file(app_config, line, value)
+
+    diff(backup, app_config)
 
 
 @main.command()
