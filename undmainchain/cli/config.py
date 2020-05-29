@@ -12,7 +12,10 @@ from undmainchain.const import get_defaults
 log = logging.getLogger(__name__)
 
 
-def line_in_file(target, prefix, replacement):
+def set_line_in_file(target, prefix, replacement):
+    if isinstance(replacement, str):
+        replacement = '"' + replacement + '"'
+
     contents = target.read_text()
     newlines = []
     for line in contents.splitlines():
@@ -43,7 +46,7 @@ def main():
 @click.argument('value', required=True)
 @click.option('-y', '--yes', required=False, is_flag=True)
 @click.option('-m', '--machine', required=False, type=str, default=None)
-def set_app(line, value, yes, machine):
+def set_app_line(line, value, yes, machine):
     """
     Change a line in the app.toml
 
@@ -61,12 +64,15 @@ def set_app(line, value, yes, machine):
     home = machine_d['home']
     user = machine_d['user']
 
+    app_config = home / 'config/app.toml'
+    set_line_in_file(app_config, line, value)
+
 
 @main.command()
 @click.argument('line', required=True)
 @click.option('-y', '--yes', required=False, is_flag=True)
 @click.option('-m', '--machine', required=False, type=str, default=None)
-def read_app(value, yes, machine):
+def get_app_line(line, yes, machine):
     """
     Read a value in the app.toml
 
@@ -80,7 +86,7 @@ def read_app(value, yes, machine):
     home = machine_d['home']
 
     app_config = home / 'config/app.toml'
-    value = read_line_in_file(app_config, value)
+    value = read_line_in_file(app_config, line)
 
     print(value)
 
