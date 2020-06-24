@@ -111,5 +111,65 @@ def get_app_line(line, yes, machine):
     print(value)
 
 
+@main.command()
+@click.argument('line', required=True)
+@click.argument('value', required=True)
+@click.option('-y', '--yes', required=False, is_flag=True)
+@click.option('-m', '--machine', required=False, type=str, default=None)
+def set_config_line(line, value, yes, machine):
+    """
+    Change a line in the config.toml
+
+    """
+    log.info('Re-writing line in config file')
+    if yes is False:
+        click.confirm('Do you want to continue?', abort=True)
+
+    defaults = get_defaults()
+    if machine is None:
+        machine_d = defaults['default']
+    else:
+        machine_d = defaults[machine]
+
+    home = machine_d['home']
+    user = machine_d['user']
+
+    config_config = home / 'config/config.toml'
+
+    td = tempfile.gettempdir()
+    now = int(time.time())
+    backup = Path(td) / f'config-{now}.config'
+
+    copyfile(config_config, backup)
+    log.info(f'Config backed up to {backup}')
+
+    set_line_in_file(config_config, line, value)
+
+    diff(backup, config_config)
+
+
+@main.command()
+@click.argument('line', required=True)
+@click.option('-y', '--yes', required=False, is_flag=True)
+@click.option('-m', '--machine', required=False, type=str, default=None)
+def get_config_line(line, yes, machine):
+    """
+    Read a value in the config.toml
+
+    """
+    defaults = get_defaults()
+    if machine is None:
+        machine_d = defaults['default']
+    else:
+        machine_d = defaults[machine]
+
+    home = machine_d['home']
+
+    config_config = home / 'config/config.toml'
+    value = read_line_in_file(config_config, line)
+
+    print(value)
+
+
 if __name__ == "__main__":
     main()
