@@ -99,6 +99,7 @@ def down(access_key, access_secret, bucket_name, yes, machine):
     state = priv_validator_state_backup.read_text()
     priv_validator_state_orig.write_text(state)
 
+    run_shell(f'chown -R {user}:{user} {str(data)}')
 
 if __name__ == "__main__":
     main()
