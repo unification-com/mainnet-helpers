@@ -1,7 +1,7 @@
 #+STARTUP: SHOWEVERYTHING
 * Unification Mainnet Helpers
 
-Miscellaneous tools to help support the maintenance of Unification Mainnet EVs can be found here. 
+Miscellaneous tools to help support the maintenance of Unification Mainnet EVs can be found here. This library can be customised to your own architecture by editing the ~const.py~ file.
 
 ** Defaults
 Due to the complexity of the beast, these tools will only work with our standard environments. This library also only currently supports Linux. There is some room for differences that the codebase can be modified to handle.
@@ -12,14 +12,12 @@ python -m undmainchain.cli.defaults show
 #+END_SRC
 
 All the helpers take a ~--machine~ option that loads custom values. These values are defined in the ~undmainchain.const~ module.
-
 ** Reset All
 This command will wipe all your chain data, use the latest published und versions and genesis. Whilst it may take much time to catch up, this is a good fresh slate if needed.
 
 #+BEGIN_SRC 
 python -m undmainchain.cli.upgrade reset
 #+END_SRC
-
 *** Install a specific version
 
 #+BEGIN_SRC 
@@ -50,9 +48,7 @@ python -m undmainchain.cli.upgrade genesis 700000
 
 The helper will wait until the specified block and then perform an upgrade.
 
-
 ** Updating the app.config
-
 A standard interface to updating config on any node is provided. Configuration can both be get and set. When setting the config, and backup is automatically made and the difference between the old and the new is rendered.
 
 #+BEGIN_SRC 
