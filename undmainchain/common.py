@@ -32,13 +32,25 @@ def upload_file(
     log.info(f'Uploaded {remote}')
 
 
-def s3_sync(
+def s3_sync_up(
         access_key, access_secret, local: Path, bucket):
     cmd = f"export AWS_ACCESS_KEY_ID={access_key}; export " \
         f"AWS_SECRET_ACCESS_KEY={access_secret};  " \
         f"aws s3 sync {local}/data s3://{bucket}"
     log.info(cmd)
     stdout = run_shell(cmd)
-    print (stdout)
+    print(stdout)
+
+    log.info(f'Synced {bucket}')
+
+
+def s3_sync_down(
+        access_key, access_secret, local: Path, bucket):
+    cmd = f"export AWS_ACCESS_KEY_ID={access_key}; export " \
+        f"AWS_SECRET_ACCESS_KEY={access_secret};  " \
+        f"aws s3 sync s3://{bucket} {local}/data"
+    log.info(cmd)
+    stdout = run_shell(cmd)
+    print(stdout)
 
     log.info(f'Synced {bucket}')
