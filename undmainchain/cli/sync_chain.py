@@ -19,14 +19,15 @@ def main():
 @main.command()
 @click.argument('access_key', required=True)
 @click.argument('access_secret', required=True)
+@click.argument('bucket_name', required=True)
 @click.option('-y', '--yes', required=False, is_flag=True)
 @click.option('-m', '--machine', required=False, type=str, default=None)
-def chain(access_key, access_secret, yes, machine):
+def up(access_key, access_secret, bucket_name, yes, machine):
     """
-    Sync the Chain with Amazon S3
+    Sync the Chain up to Amazon S3
 
     """
-    log.info('Sync Chain to Amazon S3')
+    log.info('Sync the Chain up to Amazon S3')
     if yes is False:
         click.confirm(
             'Warning: this may consume a lot of data. '
@@ -41,8 +42,7 @@ def chain(access_key, access_secret, yes, machine):
     home = machine_d['home']
 
     stop(machine_d)
-    bucket = 'unification-mainchain'  # TODO: Try to generalise this
-    s3_sync(access_key, access_secret, home, bucket)
+    s3_sync(access_key, access_secret, home, bucket_name)
     start(machine_d)
 
 
