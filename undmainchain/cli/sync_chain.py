@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 
 import click
 
@@ -91,7 +92,7 @@ def down(access_key, access_secret, bucket_name, yes, machine):
     run_shell(f'chown {user}:{user} {str(priv_validator_state_backup)}')
 
     # Remove the data dir and sync down
-    data.rmdir()
+    shutil.rmtree(str(data))
     s3_sync_down(access_key, access_secret, home, bucket_name)
 
     priv_validator_state_orig.unlink()
