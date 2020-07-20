@@ -37,6 +37,8 @@ def s3_sync(
     cmd = f"export AWS_ACCESS_KEY_ID={access_key}; export " \
         f"AWS_SECRET_ACCESS_KEY={access_secret};  " \
         f"aws s3 sync {local}/data s3://{bucket}"
-    run_shell(cmd)
+    log.info(cmd)
+    stdout = run_shell(cmd)
+    print (stdout)
 
     log.info(f'Synced {bucket}')
