@@ -7,6 +7,7 @@ from pathlib import Path
 
 from undmainchain.common import stop, start, s3_sync_up, s3_sync_down
 from undmainchain.const import get_defaults
+from undmainchain.sync import run_shell
 
 log = logging.getLogger(__name__)
 
@@ -76,13 +77,16 @@ def down(access_key, access_secret, bucket_name, yes, machine):
         machine_d = defaults[machine]
 
     home = get_home(machine_d)
+    user = machine_d['user']
 
+    log.info('Backing up private validator state')
     priv_validator_state_backup = home / 'priv_validator_state.json'
     priv_validator_state_orig = home / 'data/priv_validator_state.json'
     if priv_validator_state_backup.exists():
         priv_validator_state_backup.unlink()
     state = priv_validator_state_orig.read_text()
     priv_validator_state_backup.write_text(state)
+    run_shell(f'chown {user}:{user} {str(priv_validator_state_backup)}')
 
 
 if __name__ == "__main__":
