@@ -24,6 +24,16 @@ python -m undmainchain.cli.upgrade reset
 python -m undmainchain.cli.upgrade binaries 1.4.1
 #+END_SRC
 
+** Sync with S3
+Synching with S3 is extremely fast on AWS infrastructure. The chain can be synced up and down using the following commands:
+
+#+BEGIN_SRC
+python -m undmainchain.cli.sync_chain up <AWSKEY> <AWSSECRET> unification-mainchain
+#+END_SRC
+
+#+BEGIN_SRC
+python -m undmainchain.cli.sync_chain down <AWSKEY> <AWSSECRET> unification-mainchain
+#+END_SRC
 ** Export to S3
 *** Genesis Export 
 The export helper will stop the EV, export the chain data to a JSON file and upload it to Amazon S3, and start the EV again.
@@ -33,7 +43,7 @@ python -m undmainchain.cli.export genesis <HEIGHT> <AWSKEY> <AWSSECRET>
 #+END_SRC
 
 *** Chain Export
-The entire chain can be compressed and exported to S3. Warning: chains can be large and uploading to S3 can incur cost.
+The entire chain can be compressed and exported to S3. This method is vestigual, and using the sync feature is more efficient.
 
 #+BEGIN_SRC 
 python -m undmainchain.cli.export chain <AWSKEY> <AWSSECRET>
